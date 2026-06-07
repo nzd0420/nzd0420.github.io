@@ -1,6 +1,6 @@
-# Ning Z. Portfolio
+# LongNeckCAT Portfolio
 
-A static React + Vite + TypeScript portfolio for a computer science student.
+A static React + Vite + TypeScript portfolio for Zidong Ning, a ShanghaiTech University 2024 undergraduate computer science student.
 
 ## Local Development
 

@@ -1,37 +1,31 @@
+import { useI18n } from "../i18n";
+import peopleImage from "../assets/track-people.png";
+
 export function AboutSection() {
+  const { t } = useI18n();
+
   return (
     <section className="content-section section-shell" id="about">
       <div className="section-heading">
-        <p className="section-kicker">Profile</p>
-        <h2>About</h2>
+        <p className="section-kicker">{t.about.kicker}</p>
+        <h2>{t.about.title}</h2>
       </div>
       <div className="about-grid">
-        <article className="panel panel--wide">
-          <p>
-            Hi, I am Ning, a computer science student interested in building
-            useful software with clear interfaces and thoughtful engineering. I
-            enjoy working across web development, data visualization, algorithms,
-            and small tools that make learning or everyday work smoother.
-          </p>
-          <p>
-            This site collects larger projects, quick experiments, technical
-            notes, and links I want to keep easy to find. The placeholder content
-            is designed to be replaced as the portfolio grows.
-          </p>
+        <article className="panel panel--wide about-copy">
+          {t.about.paragraphs.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
         </article>
-        <aside className="panel stats-panel" aria-label="Portfolio highlights">
-          <div>
-            <span className="stat-value">04</span>
-            <span className="stat-label">Project slots</span>
-          </div>
-          <div>
-            <span className="stat-value">12</span>
-            <span className="stat-label">Reusable notes</span>
-          </div>
-          <div>
-            <span className="stat-value">100%</span>
-            <span className="stat-label">Static build</span>
-          </div>
+        <figure className="about-photo">
+          <img src={peopleImage} alt={t.about.imageAlt} />
+        </figure>
+        <aside className="panel stats-panel" aria-label={t.about.highlightsAria}>
+          {t.about.stats.map((stat) => (
+            <div key={`${stat.value}-${stat.label}`}>
+              <span className="stat-value">{stat.value}</span>
+              <span className="stat-label">{stat.label}</span>
+            </div>
+          ))}
         </aside>
       </div>
     </section>

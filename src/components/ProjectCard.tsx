@@ -1,17 +1,20 @@
 import type { Project } from "../data/projects";
+import { useI18n } from "../i18n";
 
 type ProjectCardProps = {
   project: Project;
 };
 
 export function ProjectCard({ project }: ProjectCardProps) {
-  const statusClass = project.status.toLowerCase().replace(/\s+/g, "-");
+  const { language, t } = useI18n();
+  const name = project.name[language];
+  const status = project.statusLabel[language];
 
   return (
     <article className="project-card panel">
       <div className="card-topline">
-        <span className={`status-pill status-pill--${statusClass}`}>
-          {project.status}
+        <span className={`status-pill status-pill--${project.status}`}>
+          {status}
         </span>
         <span className="signal-bars" aria-hidden="true">
           <span />
@@ -19,20 +22,22 @@ export function ProjectCard({ project }: ProjectCardProps) {
           <span />
         </span>
       </div>
-      <h3>{project.name}</h3>
-      <p>{project.description}</p>
-      <ul className="tech-stack" aria-label={`${project.name} technology stack`}>
+      <h3>{name}</h3>
+      <p>{project.description[language]}</p>
+      <ul className="tech-stack" aria-label={`${name} ${t.projects.stackAriaSuffix}`}>
         {project.stack.map((item) => (
-          <li key={item}>{item}</li>
+          <li key={item[language]}>{item[language]}</li>
         ))}
       </ul>
-      <div className="card-links">
-        {project.links.map((link) => (
-          <a key={link.label} href={link.href}>
-            {link.label}
-          </a>
-        ))}
-      </div>
+      {project.links.length > 0 ? (
+        <div className="card-links">
+          {project.links.map((link) => (
+            <a key={link.label[language]} href={link.href}>
+              {link.label[language]}
+            </a>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 }
