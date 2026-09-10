@@ -1,0 +1,17 @@
+cathedral.jpg single G (dy, dx): (5, 2) R (dy, dx): (12, 3) 0.20s
+cathedral.jpg pyramid G (dy, dx): (5, 2) R (dy, dx): (12, 3) 0.14s
+church.tif pyramid G (dy, dx): (25, 4) R (dy, dx): (58, -4) 1.88s
+emir.tif pyramid G (dy, dx): (49, 24) R (dy, dx): (-144, -378) 1.54s
+harvesters.tif pyramid G (dy, dx): (60, 17) R (dy, dx): (124, 14) 1.78s
+icon.tif pyramid G (dy, dx): (41, 17) R (dy, dx): (89, 23) 1.86s
+ilemselga.tif pyramid G (dy, dx): (40, 7) R (dy, dx): (130, 11) 1.73s
+melons.tif pyramid G (dy, dx): (81, 10) R (dy, dx): (178, 13) 1.72s
+monastery.jpg single G (dy, dx): (-3, 2) R (dy, dx): (3, 2) 0.26s
+monastery.jpg pyramid G (dy, dx): (-3, 2) R (dy, dx): (3, 2) 0.14s
+religous_painting.tif pyramid G (dy, dx): (28, 3) R (dy, dx): (68, 7) 1.82s
+self_portrait.tif pyramid G (dy, dx): (79, 29) R (dy, dx): (176, 37) 1.70s
+siren.tif pyramid G (dy, dx): (49, -6) R (dy, dx): (96, -25) 1.84s
+three_generations.tif pyramid G (dy, dx): (53, 14) R (dy, dx): (111, 11) 1.80s
+tobolsk.jpg single G (dy, dx): (3, 3) R (dy, dx): (6, 3) 0.27s
+tobolsk.jpg pyramid G (dy, dx): (3, 3) R (dy, dx): (6, 3) 0.14s
+wharf.tif pyramid G (dy, dx): (15, -7) R (dy, dx): (82, -16) 1.68s

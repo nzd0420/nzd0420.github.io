@@ -1,0 +1,17 @@
+cathedral.jpg single G (dy, dx): (5, 2) R (dy, dx): (12, 3) 0.21s
+cathedral.jpg edges G (dy, dx): (5, 2) R (dy, dx): (12, 3) 0.14s
+church.tif edges G (dy, dx): (25, 4) R (dy, dx): (58, -4) 2.01s
+emir.tif edges G (dy, dx): (49, 23) R (dy, dx): (107, 40) 1.91s
+harvesters.tif edges G (dy, dx): (60, 17) R (dy, dx): (123, 14) 1.93s
+icon.tif edges G (dy, dx): (42, 17) R (dy, dx): (90, 23) 2.09s
+ilemselga.tif edges G (dy, dx): (40, 7) R (dy, dx): (131, 11) 2.03s
+melons.tif edges G (dy, dx): (80, 10) R (dy, dx): (177, 13) 1.87s
+monastery.jpg single G (dy, dx): (-3, 2) R (dy, dx): (3, 2) 0.22s
+monastery.jpg edges G (dy, dx): (-3, 2) R (dy, dx): (3, 2) 0.14s
+religous_painting.tif edges G (dy, dx): (30, 1) R (dy, dx): (70, 7) 1.86s
+self_portrait.tif edges G (dy, dx): (78, 29) R (dy, dx): (176, 37) 1.91s
+siren.tif edges G (dy, dx): (49, -6) R (dy, dx): (96, -24) 1.94s
+three_generations.tif edges G (dy, dx): (54, 13) R (dy, dx): (111, 9) 2.02s
+tobolsk.jpg single G (dy, dx): (3, 3) R (dy, dx): (6, 3) 0.28s
+tobolsk.jpg edges G (dy, dx): (3, 3) R (dy, dx): (6, 3) 0.15s
+wharf.tif edges G (dy, dx): (15, -7) R (dy, dx): (82, -17) 2.28s

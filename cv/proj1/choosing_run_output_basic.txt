@@ -1,0 +1,3 @@
+master-pnp-prok-00100-00117a.tif pyramid G (dy, dx): (51, 0) R (dy, dx): (125, -13) 1.78s
+master-pnp-prok-00200-00215a.tif pyramid G (dy, dx): (41, -16) R (dy, dx): (93, -29) 1.78s
+master-pnp-prok-00400-00402a.tif pyramid G (dy, dx): (79, 20) R (dy, dx): (152, 25) 1.66s
