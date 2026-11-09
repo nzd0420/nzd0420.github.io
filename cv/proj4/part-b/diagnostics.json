@@ -1,0 +1,370 @@
+{
+  "parameters": {
+    "max_dim": 1600,
+    "features": 1000,
+    "harris_threshold_rel": 0.005,
+    "harris_max_candidates": 12000,
+    "harris_derivative_sigma": 1.0,
+    "harris_integration_sigma": 1.5,
+    "anms_robust": 0.9,
+    "descriptor_window": 40,
+    "descriptor_size": 8,
+    "descriptor_blur_sigma": 2.0,
+    "squared_ratio_threshold": 0.65,
+    "mutual_check": true,
+    "ransac_threshold_px": 3.0,
+    "seed": 180
+  },
+  "matchCount": 862,
+  "inlierCount": 476,
+  "scenes": [
+    {
+      "id": "night",
+      "candidates": 10071,
+      "selected": 1000,
+      "croppedSize": [
+        5765,
+        1600
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "targetIndex": 1,
+          "matches": 58,
+          "inliers": 21,
+          "inlierRatio": 0.3620689655172414,
+          "rmse": 1.2537443003503115,
+          "medianError": 1.0158083720336004,
+          "maxError": 2.7707697158293536,
+          "iterations": 597,
+          "H": [
+            [
+              2.728207662359534,
+              -0.4422145897158597,
+              -2103.3140237668313
+            ],
+            [
+              1.3143626743868564,
+              2.576899500189567,
+              -1432.337645555101
+            ],
+            [
+              0.0014699512976267086,
+              6.487491783337266e-07,
+              1.0
+            ]
+          ],
+          "matchesShown": 58,
+          "inliersShown": 21,
+          "matching": {
+            "src": "/cv/proj4/part-b/night-0-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/night-0-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "targetIndex": 1,
+          "matches": 102,
+          "inliers": 41,
+          "inlierRatio": 0.4019607843137255,
+          "rmse": 1.3513593738565541,
+          "medianError": 1.014250050534543,
+          "maxError": 2.859689387438633,
+          "iterations": 500,
+          "H": [
+            [
+              0.3669304085049981,
+              0.07073660844646018,
+              782.2701809769493
+            ],
+            [
+              -0.46301057966284503,
+              0.9220751394512626,
+              44.679386745198826
+            ],
+            [
+              -0.0005329063554413253,
+              1.4736375672719069e-05,
+              1.0
+            ]
+          ],
+          "matchesShown": 80,
+          "inliersShown": 41,
+          "matching": {
+            "src": "/cv/proj4/part-b/night-2-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/night-2-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        }
+      ],
+      "harris": {
+        "src": "/cv/proj4/part-b/night-harris.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "anms": {
+        "src": "/cv/proj4/part-b/night-anms.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "descriptors": {
+        "src": "/cv/proj4/part-b/night-descriptors.webp",
+        "width": 1200,
+        "height": 492
+      },
+      "final": {
+        "src": "/cv/proj4/part-b/night-auto.jpg",
+        "width": 5765,
+        "height": 1600
+      },
+      "full": {
+        "src": "/cv/proj4/part-b/night-full.webp",
+        "width": 2400,
+        "height": 1574
+      }
+    },
+    {
+      "id": "hall",
+      "candidates": 3945,
+      "selected": 1000,
+      "croppedSize": [
+        3299,
+        1559
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "targetIndex": 1,
+          "matches": 191,
+          "inliers": 119,
+          "inlierRatio": 0.6230366492146597,
+          "rmse": 1.384722090659973,
+          "medianError": 1.145666234707912,
+          "maxError": 2.991183724400391,
+          "iterations": 500,
+          "H": [
+            [
+              1.7402192274964847,
+              0.032193808312285285,
+              -1104.8955087999989
+            ],
+            [
+              0.4725303717563358,
+              1.542375399859721,
+              -396.8665517236116
+            ],
+            [
+              0.0006007886122247879,
+              9.478303490943087e-06,
+              1.0
+            ]
+          ],
+          "matchesShown": 80,
+          "inliersShown": 80,
+          "matching": {
+            "src": "/cv/proj4/part-b/hall-0-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/hall-0-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "targetIndex": 1,
+          "matches": 178,
+          "inliers": 98,
+          "inlierRatio": 0.550561797752809,
+          "rmse": 1.584879475013692,
+          "medianError": 1.3575611137668917,
+          "maxError": 2.9250023110421917,
+          "iterations": 500,
+          "H": [
+            [
+              0.5848533571306205,
+              -0.0813596912255145,
+              623.8538775054567
+            ],
+            [
+              -0.2508483199343156,
+              0.8204243478332862,
+              177.5988948124988
+            ],
+            [
+              -0.0003415341474276971,
+              -4.3782679483276145e-05,
+              1.0
+            ]
+          ],
+          "matchesShown": 80,
+          "inliersShown": 80,
+          "matching": {
+            "src": "/cv/proj4/part-b/hall-2-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/hall-2-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        }
+      ],
+      "harris": {
+        "src": "/cv/proj4/part-b/hall-harris.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "anms": {
+        "src": "/cv/proj4/part-b/hall-anms.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "descriptors": {
+        "src": "/cv/proj4/part-b/hall-descriptors.webp",
+        "width": 1200,
+        "height": 492
+      },
+      "final": {
+        "src": "/cv/proj4/part-b/hall-auto.jpg",
+        "width": 3299,
+        "height": 1559
+      },
+      "full": {
+        "src": "/cv/proj4/part-b/hall-full.webp",
+        "width": 2400,
+        "height": 1892
+      }
+    },
+    {
+      "id": "gate",
+      "candidates": 9924,
+      "selected": 1000,
+      "croppedSize": [
+        3074,
+        1569
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "targetIndex": 1,
+          "matches": 156,
+          "inliers": 84,
+          "inlierRatio": 0.5384615384615384,
+          "rmse": 1.399807619955442,
+          "medianError": 1.120522364229082,
+          "maxError": 2.9127190273154615,
+          "iterations": 500,
+          "H": [
+            [
+              1.6564459690019655,
+              -0.060515858567626854,
+              -1080.4979718402253
+            ],
+            [
+              0.36886309553855756,
+              1.5323530781653452,
+              -473.57184659099016
+            ],
+            [
+              0.0005281930043434449,
+              3.2911200421122214e-05,
+              1.0
+            ]
+          ],
+          "matchesShown": 80,
+          "inliersShown": 80,
+          "matching": {
+            "src": "/cv/proj4/part-b/gate-0-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/gate-0-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "targetIndex": 1,
+          "matches": 177,
+          "inliers": 113,
+          "inlierRatio": 0.6384180790960452,
+          "rmse": 1.1916373787104328,
+          "medianError": 0.8839565836449095,
+          "maxError": 2.582619583074047,
+          "iterations": 500,
+          "H": [
+            [
+              0.6818963655489452,
+              -0.0388714173103834,
+              581.9915440729559
+            ],
+            [
+              -0.17763546565498362,
+              0.9094815606243896,
+              49.666108127768766
+            ],
+            [
+              -0.0002635947818031894,
+              -4.044862037399337e-06,
+              1.0
+            ]
+          ],
+          "matchesShown": 80,
+          "inliersShown": 80,
+          "matching": {
+            "src": "/cv/proj4/part-b/gate-2-matches.webp",
+            "width": 1344,
+            "height": 938
+          },
+          "consensus": {
+            "src": "/cv/proj4/part-b/gate-2-inliers.webp",
+            "width": 1344,
+            "height": 938
+          }
+        }
+      ],
+      "harris": {
+        "src": "/cv/proj4/part-b/gate-harris.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "anms": {
+        "src": "/cv/proj4/part-b/gate-anms.webp",
+        "width": 900,
+        "height": 1200
+      },
+      "descriptors": {
+        "src": "/cv/proj4/part-b/gate-descriptors.webp",
+        "width": 1200,
+        "height": 492
+      },
+      "final": {
+        "src": "/cv/proj4/part-b/gate-auto.jpg",
+        "width": 3074,
+        "height": 1569
+      },
+      "full": {
+        "src": "/cv/proj4/part-b/gate-full.webp",
+        "width": 2400,
+        "height": 1804
+      }
+    }
+  ]
+}
