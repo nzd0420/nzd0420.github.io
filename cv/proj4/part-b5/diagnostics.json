@@ -1,0 +1,578 @@
+{
+  "parameters": {
+    "features_per_image": 2000,
+    "levels": 4,
+    "pyramid_step": 1.4142135623730951,
+    "pyramid_sigma": 1.0,
+    "descriptor_window": 40,
+    "descriptor_size": 8,
+    "squared_ratio_threshold": 0.65,
+    "mutual_check": true,
+    "ransac_threshold_px": 3.0,
+    "seed": 180,
+    "max_dim": 1600,
+    "test_scales": [
+      0.6,
+      0.8
+    ]
+  },
+  "scenes": [
+    {
+      "id": "night",
+      "levels": [
+        {
+          "index": 0,
+          "size": [
+            1200,
+            1600
+          ],
+          "scale_xy": [
+            1.0,
+            1.0
+          ],
+          "to_original_xy": [
+            1.0,
+            1.0
+          ],
+          "window_in_original_xy": [
+            40.0,
+            40.0
+          ],
+          "candidates": 10071,
+          "selected": 500
+        },
+        {
+          "index": 1,
+          "size": [
+            849,
+            1131
+          ],
+          "scale_xy": [
+            0.7072560467055881,
+            0.7066916823014384
+          ],
+          "to_original_xy": [
+            1.4139150943396226,
+            1.4150442477876106
+          ],
+          "window_in_original_xy": [
+            56.556603773584904,
+            56.60176991150443
+          ],
+          "candidates": 3198,
+          "selected": 500
+        },
+        {
+          "index": 2,
+          "size": [
+            600,
+            800
+          ],
+          "scale_xy": [
+            0.49958298582151794,
+            0.4996873045653534
+          ],
+          "to_original_xy": [
+            2.001669449081803,
+            2.0012515644555693
+          ],
+          "window_in_original_xy": [
+            80.06677796327212,
+            80.05006257822276
+          ],
+          "candidates": 1344,
+          "selected": 500
+        },
+        {
+          "index": 3,
+          "size": [
+            424,
+            566
+          ],
+          "scale_xy": [
+            0.35279399499582986,
+            0.3533458411507192
+          ],
+          "to_original_xy": [
+            2.83451536643026,
+            2.8300884955752212
+          ],
+          "window_in_original_xy": [
+            113.3806146572104,
+            113.20353982300885
+          ],
+          "candidates": 728,
+          "selected": 500
+        }
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "single": {
+            "matches": 98,
+            "inliers": 39,
+            "rmse_px": 1.26023435176644,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 109,
+            "inliers": 37,
+            "rmse_px": 1.4466827981095642,
+            "cross_level_inliers": 0
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "single": {
+            "matches": 181,
+            "inliers": 74,
+            "rmse_px": 1.4813203686583183,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 232,
+            "inliers": 123,
+            "rmse_px": 1.5379142874787335,
+            "cross_level_inliers": 1
+          }
+        }
+      ],
+      "scaleTests": [
+        {
+          "scale": 0.6,
+          "single": {
+            "matches": 97,
+            "inliers": 38,
+            "rmse_px": 1.143896158862951,
+            "cross_level_inliers": 0,
+            "selected": 2000,
+            "correct_matches": 38,
+            "precision": 0.3917525773195876,
+            "corner_rmse_px": 1.61248283815426
+          },
+          "multi": {
+            "matches": 565,
+            "inliers": 520,
+            "rmse_px": 1.0032513155281695,
+            "cross_level_inliers": 519,
+            "selected": 1846,
+            "correct_matches": 520,
+            "precision": 0.9203539823008849,
+            "corner_rmse_px": 0.16744506330363218
+          }
+        },
+        {
+          "scale": 0.8,
+          "single": {
+            "matches": 483,
+            "inliers": 418,
+            "rmse_px": 0.8489489102033367,
+            "cross_level_inliers": 0,
+            "selected": 2000,
+            "correct_matches": 419,
+            "precision": 0.8674948240165632,
+            "corner_rmse_px": 0.2555921684617915
+          },
+          "multi": {
+            "matches": 860,
+            "inliers": 809,
+            "rmse_px": 1.1301756524588942,
+            "cross_level_inliers": 716,
+            "selected": 2000,
+            "correct_matches": 809,
+            "precision": 0.9406976744186046,
+            "corner_rmse_px": 0.32275862929587157
+          }
+        }
+      ],
+      "single": {
+        "src": "/cv/proj4/part-b5/night-single.jpg",
+        "width": 5124,
+        "height": 1600
+      },
+      "multi": {
+        "src": "/cv/proj4/part-b5/night-multi.jpg",
+        "width": 6131,
+        "height": 1600
+      }
+    },
+    {
+      "id": "hall",
+      "levels": [
+        {
+          "index": 0,
+          "size": [
+            1200,
+            1600
+          ],
+          "scale_xy": [
+            1.0,
+            1.0
+          ],
+          "to_original_xy": [
+            1.0,
+            1.0
+          ],
+          "window_in_original_xy": [
+            40.0,
+            40.0
+          ],
+          "candidates": 3945,
+          "selected": 500
+        },
+        {
+          "index": 1,
+          "size": [
+            849,
+            1131
+          ],
+          "scale_xy": [
+            0.7072560467055881,
+            0.7066916823014384
+          ],
+          "to_original_xy": [
+            1.4139150943396226,
+            1.4150442477876106
+          ],
+          "window_in_original_xy": [
+            56.556603773584904,
+            56.60176991150443
+          ],
+          "candidates": 1988,
+          "selected": 500
+        },
+        {
+          "index": 2,
+          "size": [
+            600,
+            800
+          ],
+          "scale_xy": [
+            0.49958298582151794,
+            0.4996873045653534
+          ],
+          "to_original_xy": [
+            2.001669449081803,
+            2.0012515644555693
+          ],
+          "window_in_original_xy": [
+            80.06677796327212,
+            80.05006257822276
+          ],
+          "candidates": 1173,
+          "selected": 500
+        },
+        {
+          "index": 3,
+          "size": [
+            424,
+            566
+          ],
+          "scale_xy": [
+            0.35279399499582986,
+            0.3533458411507192
+          ],
+          "to_original_xy": [
+            2.83451536643026,
+            2.8300884955752212
+          ],
+          "window_in_original_xy": [
+            113.3806146572104,
+            113.20353982300885
+          ],
+          "candidates": 762,
+          "selected": 500
+        }
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "single": {
+            "matches": 374,
+            "inliers": 267,
+            "rmse_px": 1.382063950665331,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 464,
+            "inliers": 326,
+            "rmse_px": 1.575084369577307,
+            "cross_level_inliers": 9
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "single": {
+            "matches": 359,
+            "inliers": 223,
+            "rmse_px": 1.5509950060145992,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 411,
+            "inliers": 246,
+            "rmse_px": 1.6478329179675375,
+            "cross_level_inliers": 4
+          }
+        }
+      ],
+      "scaleTests": [
+        {
+          "scale": 0.6,
+          "single": {
+            "matches": 95,
+            "inliers": 45,
+            "rmse_px": 1.2866569921343332,
+            "cross_level_inliers": 0,
+            "selected": 1556,
+            "correct_matches": 45,
+            "precision": 0.47368421052631576,
+            "corner_rmse_px": 0.6675394908064057
+          },
+          "multi": {
+            "matches": 673,
+            "inliers": 645,
+            "rmse_px": 0.9649968748826574,
+            "cross_level_inliers": 642,
+            "selected": 1873,
+            "correct_matches": 644,
+            "precision": 0.9569093610698366,
+            "corner_rmse_px": 0.21549937917731138
+          }
+        },
+        {
+          "scale": 0.8,
+          "single": {
+            "matches": 702,
+            "inliers": 645,
+            "rmse_px": 0.8098452791139144,
+            "cross_level_inliers": 0,
+            "selected": 2000,
+            "correct_matches": 645,
+            "precision": 0.9188034188034188,
+            "corner_rmse_px": 0.0719983523127303
+          },
+          "multi": {
+            "matches": 1015,
+            "inliers": 977,
+            "rmse_px": 1.1510039923332689,
+            "cross_level_inliers": 844,
+            "selected": 2000,
+            "correct_matches": 976,
+            "precision": 0.961576354679803,
+            "corner_rmse_px": 0.18522039167601706
+          }
+        }
+      ],
+      "single": {
+        "src": "/cv/proj4/part-b5/hall-single.jpg",
+        "width": 3225,
+        "height": 1558
+      },
+      "multi": {
+        "src": "/cv/proj4/part-b5/hall-multi.jpg",
+        "width": 3278,
+        "height": 1559
+      }
+    },
+    {
+      "id": "gate",
+      "levels": [
+        {
+          "index": 0,
+          "size": [
+            1200,
+            1600
+          ],
+          "scale_xy": [
+            1.0,
+            1.0
+          ],
+          "to_original_xy": [
+            1.0,
+            1.0
+          ],
+          "window_in_original_xy": [
+            40.0,
+            40.0
+          ],
+          "candidates": 9924,
+          "selected": 500
+        },
+        {
+          "index": 1,
+          "size": [
+            849,
+            1131
+          ],
+          "scale_xy": [
+            0.7072560467055881,
+            0.7066916823014384
+          ],
+          "to_original_xy": [
+            1.4139150943396226,
+            1.4150442477876106
+          ],
+          "window_in_original_xy": [
+            56.556603773584904,
+            56.60176991150443
+          ],
+          "candidates": 4209,
+          "selected": 500
+        },
+        {
+          "index": 2,
+          "size": [
+            600,
+            800
+          ],
+          "scale_xy": [
+            0.49958298582151794,
+            0.4996873045653534
+          ],
+          "to_original_xy": [
+            2.001669449081803,
+            2.0012515644555693
+          ],
+          "window_in_original_xy": [
+            80.06677796327212,
+            80.05006257822276
+          ],
+          "candidates": 1973,
+          "selected": 500
+        },
+        {
+          "index": 3,
+          "size": [
+            424,
+            566
+          ],
+          "scale_xy": [
+            0.35279399499582986,
+            0.3533458411507192
+          ],
+          "to_original_xy": [
+            2.83451536643026,
+            2.8300884955752212
+          ],
+          "window_in_original_xy": [
+            113.3806146572104,
+            113.20353982300885
+          ],
+          "candidates": 1071,
+          "selected": 500
+        }
+      ],
+      "pairs": [
+        {
+          "sourceIndex": 0,
+          "single": {
+            "matches": 297,
+            "inliers": 153,
+            "rmse_px": 1.397980087970669,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 288,
+            "inliers": 109,
+            "rmse_px": 1.5048467890118469,
+            "cross_level_inliers": 0
+          }
+        },
+        {
+          "sourceIndex": 2,
+          "single": {
+            "matches": 313,
+            "inliers": 219,
+            "rmse_px": 1.2190196578628434,
+            "cross_level_inliers": 0
+          },
+          "multi": {
+            "matches": 399,
+            "inliers": 280,
+            "rmse_px": 1.4382892412759303,
+            "cross_level_inliers": 0
+          }
+        }
+      ],
+      "scaleTests": [
+        {
+          "scale": 0.6,
+          "single": {
+            "matches": 73,
+            "inliers": 29,
+            "rmse_px": 1.0288899317679323,
+            "cross_level_inliers": 0,
+            "selected": 2000,
+            "correct_matches": 29,
+            "precision": 0.3972602739726027,
+            "corner_rmse_px": 0.9159803731536043
+          },
+          "multi": {
+            "matches": 703,
+            "inliers": 678,
+            "rmse_px": 0.9462004527159216,
+            "cross_level_inliers": 677,
+            "selected": 1897,
+            "correct_matches": 678,
+            "precision": 0.9644381223328592,
+            "corner_rmse_px": 0.13328511567356982
+          }
+        },
+        {
+          "scale": 0.8,
+          "single": {
+            "matches": 566,
+            "inliers": 528,
+            "rmse_px": 0.8483539421664396,
+            "cross_level_inliers": 0,
+            "selected": 2000,
+            "correct_matches": 528,
+            "precision": 0.9328621908127208,
+            "corner_rmse_px": 0.26571547673488805
+          },
+          "multi": {
+            "matches": 913,
+            "inliers": 882,
+            "rmse_px": 1.117544747002973,
+            "cross_level_inliers": 745,
+            "selected": 2000,
+            "correct_matches": 881,
+            "precision": 0.9649507119386638,
+            "corner_rmse_px": 0.1622182269434631
+          }
+        }
+      ],
+      "single": {
+        "src": "/cv/proj4/part-b5/gate-single.jpg",
+        "width": 3089,
+        "height": 1568
+      },
+      "multi": {
+        "src": "/cv/proj4/part-b5/gate-multi.jpg",
+        "width": 3031,
+        "height": 1594
+      }
+    }
+  ],
+  "pyramid": {
+    "src": "/cv/proj4/part-b5/hall-pyramid.webp",
+    "width": 1280,
+    "height": 530
+  },
+  "descriptors": {
+    "src": "/cv/proj4/part-b5/gate-scale-descriptors.webp",
+    "width": 1280,
+    "height": 770
+  },
+  "scaleSingle": {
+    "src": "/cv/proj4/part-b5/gate-scale-single.webp",
+    "width": 1344,
+    "height": 938
+  },
+  "scaleMulti": {
+    "src": "/cv/proj4/part-b5/gate-scale-multi.webp",
+    "width": 1344,
+    "height": 938
+  }
+}
