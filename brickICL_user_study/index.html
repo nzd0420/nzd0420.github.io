@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>LEGO Completion Study</title>
+<link rel="stylesheet" href="styles.css">
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three.module.js",
+  "three/addons/controls/OrbitControls.js": "./vendor/OrbitControls.js",
+  "three/addons/environments/RoomEnvironment.js": "./vendor/RoomEnvironment.js",
+  "three/addons/loaders/LDrawLoader.js": "./vendor/LDrawLoader.js",
+  "three/addons/materials/LDrawConditionalLineMaterial.js": "./vendor/LDrawConditionalLineMaterial.js"
+} }
+</script>
+</head>
+<body>
+<header class="site-header">
+  <span class="brand" data-t="title"></span>
+  <span class="spacer"></span>
+  <button id="help" class="text-button" type="button" data-t="help" hidden></button>
+  <button id="lang" class="text-button" type="button"></button>
+</header>
+
+<main>
+  <!-- 1. instructions and consent -->
+  <section id="welcome" hidden>
+    <h1 data-t="welcomeTitle"></h1>
+    <p class="intro" id="intro"></p>
+    <ol class="instructions" id="instructions"></ol>
+    <p class="note" data-t="privacy"></p>
+    <label class="consent"><input id="consent" type="checkbox"><span data-t="consent"></span></label>
+    <div class="actions"><button id="start" class="primary" type="button" disabled></button></div>
+  </section>
+
+  <!-- 2. one question at a time -->
+  <section id="study" hidden>
+    <div class="topline"><span id="counter" class="eyebrow"></span><span id="answered" class="eyebrow"></span></div>
+    <div class="progress"><div id="bar"></div></div>
+    <h1 id="prompt"></h1>
+    <p class="caption" id="caption"></p>
+    <div class="tools">
+      <button class="pill" id="optHighlight" type="button" aria-pressed="true" data-t="optHighlight"></button>
+      <button class="pill" id="optEdges" type="button" aria-pressed="true" data-t="optEdges"></button>
+      <span class="spacer"></span>
+      <button class="pill" id="fitAll" type="button" data-t="fitAll"></button>
+      <button class="pill" id="fitAdded" type="button" data-t="fitAdded"></button>
+    </div>
+    <div class="grid">
+      <figure><div class="stage" id="stage0"></div><figcaption><b data-t="paneInput"></b><span data-t="paneInputSub"></span></figcaption></figure>
+      <figure><div class="stage" id="stage1"></div><figcaption><b data-t="paneOutput"></b><span id="paneOutputSub"></span></figcaption></figure>
+    </div>
+    <p class="hint" data-t="hint"></p>
+    <div class="rating" id="rating" role="radiogroup"></div>
+    <div class="nav">
+      <button id="prev" class="secondary" type="button" data-t="prev"></button>
+      <span class="spacer"></span>
+      <span id="saved" class="quiet" data-t="saved"></span>
+      <button id="next" class="primary" type="button"></button>
+    </div>
+    <nav id="dots" class="dots"></nav>
+  </section>
+
+  <!-- 3. submit -->
+  <section id="finish" hidden>
+    <h1 id="finishTitle"></h1>
+    <p id="finishNote"></p>
+    <p id="finishError" class="error" role="alert" hidden></p>
+    <div class="actions">
+      <button id="submit" class="primary" type="button" data-t="submit"></button>
+      <button id="review" class="secondary" type="button" data-t="review"></button>
+      <button id="download" class="secondary" type="button" data-t="download" hidden></button>
+    </div>
+  </section>
+
+  <!-- 4. done -->
+  <section id="done" hidden>
+    <h1 data-t="doneTitle"></h1>
+    <p data-t="doneNote"></p>
+    <p class="quiet" id="receipt"></p>
+  </section>
+
+  <div id="fatal" class="error" role="alert" hidden></div>
+</main>
+
+<dialog id="helpDialog">
+  <button class="close" type="button" aria-label="Close">×</button>
+  <h2 data-t="welcomeTitle"></h2>
+  <ol class="instructions" id="helpList"></ol>
+</dialog>
+
+<noscript><p class="error">Please enable JavaScript to take part in this study.</p></noscript>
+<script type="module" src="app.js"></script>
+</body>
+</html>

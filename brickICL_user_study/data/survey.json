@@ -1,0 +1,103 @@
+{
+ "schemaVersion": 1,
+ "version": "brickicl-rating-v1-4b163aea2c66",
+ "title": {
+  "zh": "乐高补全问卷",
+  "en": "LEGO Completion Study"
+ },
+ "question": {
+  "zh": "右边新加的零件（橙色描边）补得合理吗？",
+  "en": "How plausible are the added parts (outlined in orange) on the right?"
+ },
+ "labels": {
+  "zh": [
+   "很不合理",
+   "不太合理",
+   "说不准",
+   "比较合理",
+   "很合理"
+  ],
+  "en": [
+   "Very implausible",
+   "Implausible",
+   "Not sure",
+   "Plausible",
+   "Very plausible"
+  ]
+ },
+ "minutes": 8,
+ "questions": [
+  {
+   "id": "Q01"
+  },
+  {
+   "id": "Q02"
+  },
+  {
+   "id": "Q03"
+  },
+  {
+   "id": "Q04"
+  },
+  {
+   "id": "Q05"
+  },
+  {
+   "id": "Q06"
+  },
+  {
+   "id": "Q07"
+  },
+  {
+   "id": "Q08"
+  },
+  {
+   "id": "Q09"
+  },
+  {
+   "id": "Q10"
+  },
+  {
+   "id": "Q11"
+  },
+  {
+   "id": "Q12"
+  },
+  {
+   "id": "Q13"
+  },
+  {
+   "id": "Q14"
+  },
+  {
+   "id": "Q15"
+  },
+  {
+   "id": "Q16"
+  },
+  {
+   "id": "Q17"
+  },
+  {
+   "id": "Q18"
+  },
+  {
+   "id": "Q19"
+  },
+  {
+   "id": "Q20"
+  },
+  {
+   "id": "Q21"
+  },
+  {
+   "id": "Q22"
+  },
+  {
+   "id": "Q23"
+  },
+  {
+   "id": "Q24"
+  }
+ ]
+}
