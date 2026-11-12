@@ -14,7 +14,7 @@ const TEXT = {
     instructions: [
       ['看模型。', '第一行是"输入"（缺了一块的模型）和"标准答案"（蓝色描边的是原本缺的零件）。第二行是几个补全结果，新加的零件用橙色描边，其余零件变淡。拖动旋转，滚轮缩放，右键拖动平移，所有视图会一起转动。'],
       ['比较。', '对照输入和标准答案，看每个结果新加的零件种类、位置和朝向对不对，有没有悬空、穿进别的零件或者放错地方。和标准答案不完全一样但同样合理的补法，也可以给高分。'],
-      ['排名。', '先点你认为最好的结果，再点第二好的，依次往下；最后一名会自动填上。不能并列。点已选的结果可以取消，也可以清空重排，随时能回去修改。结果用字母表示，来源不显示；同一个字母在不同的题里不代表同一个来源。'],
+      ['排名。', '先点你认为最好的结果，再点第二好的，依次往下；最后一名会自动填上。不能并列。点已选的结果可以取消，也可以清空重排，随时能回去修改。如果几个结果都很差、分不出好坏，可以点“都很差”，这道题就不用排名。结果用字母表示，来源不显示；同一个字母在不同的题里不代表同一个来源。'],
     ],
     privacy: '不收集姓名和联系方式。只有在最后点击“提交”时，才会发送你的排名和每题的查看时间；在此之前进度只保存在这个浏览器里。参与是自愿的，可以随时退出。',
     consent: '我已阅读说明，同意参与。',
@@ -42,6 +42,8 @@ const TEXT = {
     rankLine: '你的排名（从好到差）：',
     rankNone: '还没有选',
     rankClear: '清空重排',
+    allBad: '都很差',
+    allBadLine: '你的回答：都很差，不排名',
     hint: '拖动旋转 · 滚轮或双指缩放 · 右键拖动平移 · ← → 换题',
     loading: '正在加载模型…',
     loadError: '模型加载失败，请刷新页面重试。',
@@ -72,7 +74,7 @@ const TEXT = {
     instructions: [
       ['Inspect the models.', 'The first row shows the Input (the model with a piece missing) and the Reference answer (the missing parts outlined in blue). The second row shows the results, with the added parts outlined in orange and the rest faded. Drag to rotate, scroll to zoom, right-drag to pan. All views move together.'],
       ['Compare.', 'Against the input and the reference, check whether each result adds the right kind of parts in the right place and orientation, and whether anything floats, intersects other parts or sits in the wrong place. A completion that differs from the reference but is just as sensible can still score high.'],
-      ['Rank.', 'Click the result you find best first, then the next best, and so on; last place is filled in automatically. No ties. Click a chosen result to take it back, or clear the ranking and start over; you can change it at any time. Results are lettered and their source is not shown; a letter does not stand for the same source across questions.'],
+      ['Rank.', 'Click the result you find best first, then the next best, and so on; last place is filled in automatically. No ties. Click a chosen result to take it back, or clear the ranking and start over; you can change it at any time. If the results are all bad and you cannot tell them apart, click “All bad” and the question needs no ranking. Results are lettered and their source is not shown; a letter does not stand for the same source across questions.'],
     ],
     privacy: 'No name or contact information is requested. Your rankings and the viewing time per question are sent only when you click Submit at the end; until then progress is kept in this browser only. Participation is voluntary and you may leave at any time.',
     consent: 'I have read the instructions and agree to take part.',
@@ -100,6 +102,8 @@ const TEXT = {
     rankLine: 'Your ranking, best to worst:',
     rankNone: 'nothing picked yet',
     rankClear: 'Clear',
+    allBad: 'All bad',
+    allBadLine: 'Your answer: all bad, no ranking',
     hint: 'Drag to rotate · scroll or pinch to zoom · right-drag to pan · ← → move',
     loading: 'Loading the model…',
     loadError: 'The model failed to load. Please reload the page.',
@@ -147,7 +151,7 @@ function shuffled(ids, seed) {            // the same order every time this part
 function newSession() {
   const participantId = crypto.randomUUID();
   return { schemaVersion: 2, version: survey.version, participantId, startedAt: new Date().toISOString(),
-    order: ['completion', 'generation'].flatMap(kind => shuffled(survey.questions.filter(q => q.kind === kind).map(q => q.id), participantId + kind)), current: 0, answers: {}, seconds: {}, viewed: {}, consent: false };
+    order: ['completion', 'generation'].flatMap(kind => shuffled(survey.questions.filter(q => q.kind === kind).map(q => q.id), participantId + kind)), current: 0, answers: {}, allBad: {}, seconds: {}, viewed: {}, consent: false };
 }
 function loadSession() {
   try {
@@ -165,7 +169,8 @@ const count = id => meta(id).n;                                         // how m
 const kindOf = id => meta(id).kind;
 const nOfKind = kind => survey.questions.filter(q => q.kind === kind).length;
 const labelsOf = id => letters().slice(0, count(id));
-const isDone = id => (session.answers[id] || []).length === count(id);  // every candidate has a place
+const isAllBad = id => session.allBad?.[id] === true;                   // answered "all bad" instead of ranking
+const isDone = id => isAllBad(id) || (session.answers[id] || []).length === count(id);  // every candidate has a place
 // One click on a candidate. The ranking lists letters from best to worst; the last place is filled in
 // automatically, a click on a chosen candidate takes it back, a click when all are placed replaces the last pick.
 function choose(ranking, label, labels) {
@@ -231,7 +236,7 @@ function buildCandidates() {            // once: one view and one rank button pe
   }));
 }
 function renderQuestion() {
-  const i = session.current, id = session.order[i], ranking = session.answers[id] || [], labels = labelsOf(id), loaded = question?.id === id;
+  const i = session.current, id = session.order[i], bad = isAllBad(id), ranking = bad ? [] : session.answers[id] || [], labels = labelsOf(id), loaded = question?.id === id;
   const kind = kindOf(id);
   $('#counter').textContent = (nOfKind('generation') ? t('partLabel')[kind] + ' · ' : '') + t('counter')(i + 1, N());
   $('#answered').textContent = t('answered')(nAnswered());
@@ -257,8 +262,10 @@ function renderQuestion() {
     button.setAttribute('aria-pressed', String(!!place));
     fig.classList.toggle('placed', !!place);
   });
-  $('#rankLine').textContent = t('rankLine') + ' ' + (ranking.length ? ranking.join(' > ') : t('rankNone'));
+  $('#rankLine').textContent = bad ? t('allBadLine') : t('rankLine') + ' ' + (ranking.length ? ranking.join(' > ') : t('rankNone'));
   $('#rankClear').disabled = !ranking.length;
+  $('#allBad').setAttribute('aria-pressed', String(bad));
+  $('#cands').classList.toggle('all-bad', bad);
   $('#prev').disabled = i === 0;
   $('#next').textContent = i === N() - 1 ? t('toFinish') : t('next');
   $('#next').disabled = !isDone(id);
@@ -307,12 +314,21 @@ async function openQuestion(index) {
 function pick(letter) {
   const id = session.order[session.current], labels = labelsOf(id);
   if (view !== 'study' || !labels.includes(letter)) return;
+  if (isAllBad(id)) { delete session.allBad[id]; session.answers[id] = []; }   // ranking takes the "all bad" answer back
   session.answers[id] = choose(session.answers[id] || [], letter, labels);
   save();
   renderQuestion();
 }
 function clearRanking() {
   session.answers[session.order[session.current]] = [];
+  save();
+  renderQuestion();
+}
+function toggleAllBad() {                 // "all bad" answers the question in place of a ranking; a second click takes it back
+  const id = session.order[session.current];
+  session.allBad ??= {};
+  if (isAllBad(id)) delete session.allBad[id];
+  else { session.allBad[id] = true; session.answers[id] = []; }
   save();
   renderQuestion();
 }
@@ -326,7 +342,7 @@ function goNext() {
 function payload() {
   return { schemaVersion: 2, version: survey.version, participantId: session.participantId, startedAt: session.startedAt,
     submittedAt: new Date().toISOString(), lang, viewport: [innerWidth, innerHeight], order: session.order,
-    answers: session.order.map(id => ({ questionId: id, ranking: [...session.answers[id]],
+    answers: session.order.map(id => ({ questionId: id, ...(isAllBad(id) ? { allBad: true } : { ranking: [...session.answers[id]] }),
       activeSeconds: Math.round(session.seconds[id] || 0), loaded3D: !!session.viewed[id] })) };
 }
 async function submit() {
@@ -377,6 +393,7 @@ async function boot() {
   $('#start').onclick = () => { session.consent = true; save(); openQuestion(session.current); };
   $('#cands').onclick = e => { const b = e.target.closest('.rank'); if (b) pick(b.closest('figure').dataset.letter); };
   $('#rankClear').onclick = clearRanking;
+  $('#allBad').onclick = toggleAllBad;
   $('#prev').onclick = () => openQuestion(session.current - 1);
   $('#next').onclick = goNext;
   $('#dots').onclick = e => { const b = e.target.closest('button'); if (b) openQuestion(+b.dataset.index); };
