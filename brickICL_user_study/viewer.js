@@ -1,4 +1,5 @@
-// Two linked 3D views of one question: the input (left) and the input plus the added parts (right).
+// Linked 3D views of one question: the input, the reference answer and the candidates. Every view shows
+// the same input parts; all but the first add their own parts on top, outlined.
 // The LDraw handling follows nzd-supertry/viewer/index.html.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -8,7 +9,22 @@ import { LDrawConditionalLineMaterial } from 'three/addons/materials/LDrawCondit
 
 const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-// One camera and one target for both views, so they turn together.
+// Fetch JSON, trying again when the connection drops; `absent` is what a file that does not exist (404) stands for.
+export async function fetchJson(url, absent) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const r = await fetch(url);
+      if (r.ok) return await r.json();
+      if (r.status === 404 && absent !== undefined) return absent;
+      throw Error(`${r.status} for ${url}`);
+    } catch (err) {
+      if (attempt >= 3) throw err;
+      await new Promise(res => setTimeout(res, 400 * (attempt + 1)));
+    }
+  }
+}
+
+// One camera and one target for every view, so they turn together.
 const camera = new THREE.PerspectiveCamera(32, 1, 1, 1e5);
 const target = new THREE.Vector3();
 const panes = [];
@@ -69,9 +85,12 @@ class Pane {
 }
 
 export class Viewer {
-  // hosts: the two .stage elements; dataUrl: folder with colors.ldr and lib/
+  // hosts: the .stage elements, one per view (data-tone="ref" outlines in the reference colour);
+  // dataUrl: folder with colors.ldr and lib/
   constructor(hosts, dataUrl) {
     this.dataUrl = dataUrl;
+    this.tones = hosts.map(h => (h.dataset.tone === 'ref' ? '--ref' : '--added'));
+    this.hulls = {};
     hosts.forEach(h => panes.push(new Pane(h)));
     this.loader = new LDrawLoader();
     this.loader.setConditionalLineMaterial(LDrawConditionalLineMaterial);
@@ -84,7 +103,9 @@ export class Viewer {
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { this.dimCache.clear(); this.fill(); });
   }
 
-  // q: { context: [LDraw lines], added: [LDraw lines], parts: [part files] }. Resolves true once it is on screen.
+  // q: { context: [LDraw lines], views: [per view, the LDraw lines it adds, or null], parts: [part files],
+  //      separate: true when the views are unrelated whole models rather than additions to one input }.
+  // Resolves true once it is on screen.
   async show(q) {
     const ticket = ++this.ticket;
     this.current = null;
@@ -92,11 +113,11 @@ export class Viewer {
     invalidate();
     await this.ready;
     await Promise.all(q.parts.filter(p => !this.lib.has(p)).map(async p => {
-      const r = await fetch(this.dataUrl + 'lib/' + p.replace(/[^\w.-]/g, '_') + '.json');
-      this.lib.set(p, r.ok ? await r.json() : {});
+      this.lib.set(p, await fetchJson(this.dataUrl + 'lib/' + p.replace(/[^\w.-]/g, '_') + '.json', {}));
     }));
     if (ticket !== this.ticket) return false;
-    const lines = [...q.context, ...q.added];
+    const lines = [...q.context], ranges = [];
+    for (const added of q.views) { const a = lines.length; lines.push(...(added || [])); ranges.push([a, lines.length]); }
     const sections = new Map();
     for (const p of q.parts) for (const [key, text] of Object.entries(this.lib.get(p))) if (text) sections.set(key, text);
     let text = '0 FILE main.ldr\n0 Name: main.ldr\n' + lines.join('\n0 STEP\n') + '\n';
@@ -107,12 +128,34 @@ export class Viewer {
     model.children.forEach(o => { if (o.isGroup) parts[o.userData.buildingStep] = o; });
     model.rotation.x = Math.PI;                // LDraw is -Y up
     model.updateMatrixWorld(true);
+    // The camera frames the input and everything any view adds; "added parts" frames what the first view with parts adds.
     const n0 = q.context.length, box = new THREE.Box3(), boxAdded = new THREE.Box3();
-    parts.forEach((p, j) => { if (!p) return; box.expandByObject(p); if (j >= n0) boxAdded.expandByObject(p); });
-    const c = box.getCenter(new THREE.Vector3()), offset = new THREE.Vector3(-c.x, -box.min.y, -c.z);
+    const [fa, fb] = ranges.find(([a, b]) => b > a) || [0, 0];
+    parts.forEach((p, j) => { if (!p) return; box.expandByObject(p); if (j >= fa && j < fb) boxAdded.expandByObject(p); });
+    const ground = b => { const c = b.getCenter(new THREE.Vector3()); return new THREE.Vector3(-c.x, -b.min.y, -c.z); };
+    let offsets, scales = ranges.map(() => 1);
+    if (q.separate) {
+      // Every model stands on the ground at the centre of its own view, and is scaled to the size of the
+      // largest one: the models are unrelated, so a small one should not look small next to a large one.
+      const owns = ranges.map(([a, b]) => {
+        const own = new THREE.Box3();
+        for (let j = a; j < b; j++) if (parts[j]) own.expandByObject(parts[j]);
+        return own;
+      });
+      offsets = owns.map(own => (own.isEmpty() ? new THREE.Vector3() : ground(own)));
+      const radii = owns.map((own, i) => (own.isEmpty() ? 0 : own.translate(offsets[i]).getBoundingSphere(new THREE.Sphere()).radius));
+      const largest = Math.max(...radii, 1);
+      scales = radii.map(r => (r > 0 ? largest / r : 1));
+      box.makeEmpty();
+      owns.forEach((own, i) => { if (!own.isEmpty()) box.union(new THREE.Box3(own.min.clone().multiplyScalar(scales[i]), own.max.clone().multiplyScalar(scales[i]))); });
+      boxAdded.copy(box);
+    } else {
+      const offset = ground(box);
+      offsets = ranges.map(() => offset);
+      box.translate(offset); boxAdded.translate(offset);
+    }
     const size = box.getSize(new THREE.Vector3());
-    this.current = { parts, n0, offset, box: box.translate(offset), boxAdded: boxAdded.translate(offset),
-      radius: Math.max(size.x, size.y, size.z, 40) };
+    this.current = { parts, n0, ranges, offsets, scales, separate: !!q.separate, box, boxAdded, radius: Math.max(size.x, size.y, size.z, 40) };
     panes.forEach(p => p.resize());
     this.fill();
     this.fit();
@@ -133,12 +176,12 @@ export class Viewer {
 
   // An orange silhouette around an added part: the part drawn again, back faces only, stretched about the
   // centre of its bounding box (in the part's own frame) so that every side sticks out by `width`.
-  outline(part, width) {
+  outline(part, width, tone) {
     const inner = part.clone();
     inner.visible = true;
     inner.position.set(0, 0, 0); inner.quaternion.identity(); inner.scale.set(1, 1, 1);
     inner.traverse(c => {
-      if (c.isMesh) { c.material = this.hull ??= new THREE.MeshBasicMaterial({ side: THREE.BackSide }); c.castShadow = false; }
+      if (c.isMesh) { c.material = this.hulls[tone] ??= new THREE.MeshBasicMaterial({ side: THREE.BackSide }); c.castShadow = false; }
       else if (c.isLineSegments) c.visible = false;
     });
     inner.updateMatrixWorld(true);
@@ -153,7 +196,7 @@ export class Viewer {
     return wrap;
   }
 
-  add(root, part, mode, width) {
+  add(root, part, mode, width, tone) {
     if (!part) return;
     const o = part.clone();
     o.visible = true;
@@ -164,27 +207,26 @@ export class Viewer {
       } else if (c.isLineSegments) c.visible = this.opt.edges;
     });
     root.add(o);
-    if (mode === 'added') root.add(this.outline(part, width));
+    if (mode === 'added') root.add(this.outline(part, width, tone));
   }
 
   fill() {
     const T = this.current;
     if (!T) return;
-    this.hull?.color.set(css('--added'));
     const width = Math.max(T.radius * 0.014, 0.8);
     panes.forEach((pane, i) => {
       const root = new THREE.Group();
       root.rotation.x = Math.PI;
-      root.position.copy(T.offset);
-      const hl = i === 1 && this.opt.highlight;
-      T.parts.forEach((p, j) => {
-        if (j < T.n0) this.add(root, p, hl ? 'dim' : null);
-        else if (i === 1) this.add(root, p, hl ? 'added' : null, width);
-      });
-      this.hull?.color.set(css('--added'));
+      root.scale.setScalar(T.scales[i]);
+      root.position.copy(T.offsets[i]).multiplyScalar(T.scales[i]);
+      const [a, b] = T.ranges[i] || [0, 0];
+      const hl = this.opt.highlight && i > 0 && !T.separate;   // the first view is the plain input; whole models are shown as they are
+      for (let j = 0; j < T.n0; j++) this.add(root, T.parts[j], hl ? 'dim' : null);
+      for (let j = a; j < b; j++) this.add(root, T.parts[j], hl ? 'added' : null, width, this.tones[i]);
       pane.setRoot(root);
       pane.light(T.radius);
     });
+    for (const [tone, mat] of Object.entries(this.hulls)) mat.color.set(css(tone));
     invalidate();
   }
 
@@ -195,6 +237,7 @@ export class Viewer {
     if (!T) return;
     const sphere = (onAdded && !T.boxAdded.isEmpty() ? T.boxAdded : T.box).getBoundingSphere(new THREE.Sphere());
     if (onAdded) sphere.radius = Math.max(sphere.radius * 2.2, T.radius * 0.35);
+    if (T.separate) sphere.radius *= 0.78;     // the union of differently shaped models overstates what each view needs
     const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
     const half = Math.min(vHalf, Math.atan(Math.tan(vHalf) * camera.aspect));
     const dist = sphere.radius / Math.sin(half) * 1.08;

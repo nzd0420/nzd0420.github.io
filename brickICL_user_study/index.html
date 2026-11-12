@@ -35,7 +35,7 @@
     <div class="actions"><button id="start" class="primary" type="button" disabled></button></div>
   </section>
 
-  <!-- 2. one question at a time -->
+  <!-- 2. one question at a time: the input, the reference answer, then the candidates to rate -->
   <section id="study" hidden>
     <div class="topline"><span id="counter" class="eyebrow"></span><span id="answered" class="eyebrow"></span></div>
     <div class="progress"><div id="bar"></div></div>
@@ -48,12 +48,17 @@
       <button class="pill" id="fitAll" type="button" data-t="fitAll"></button>
       <button class="pill" id="fitAdded" type="button" data-t="fitAdded"></button>
     </div>
-    <div class="grid">
-      <figure><div class="stage" id="stage0"></div><figcaption><b data-t="paneInput"></b><span data-t="paneInputSub"></span></figcaption></figure>
-      <figure><div class="stage" id="stage1"></div><figcaption><b data-t="paneOutput"></b><span id="paneOutputSub"></span></figcaption></figure>
+    <div class="grid" id="refs">
+      <figure><div class="stage" id="stageInput"></div><figcaption><b data-t="paneInput"></b><span data-t="paneInputSub"></span></figcaption></figure>
+      <figure><div class="stage" id="stageRef" data-tone="ref"></div><figcaption><b data-t="paneRef"></b><span id="paneRefSub"></span></figcaption></figure>
+      <div class="guide">
+        <p id="guide"></p>
+        <p class="hint" data-t="hint"></p>
+      </div>
     </div>
-    <p class="hint" data-t="hint"></p>
-    <div class="rating" id="rating" role="radiogroup"></div>
+    <p id="guideAlone" class="caption" hidden></p>
+    <div class="grid" id="cands"></div>
+    <div class="ranking"><span id="rankLine"></span><button class="pill" id="rankClear" type="button" data-t="rankClear"></button></div>
     <div class="nav">
       <button id="prev" class="secondary" type="button" data-t="prev"></button>
       <span class="spacer"></span>

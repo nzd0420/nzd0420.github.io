@@ -1,103 +1,348 @@
 {
- "schemaVersion": 1,
- "version": "brickicl-rating-v1-4b163aea2c66",
+ "schemaVersion": 2,
+ "version": "brickicl-ranking-v1-a1a57c09bd82",
  "title": {
   "zh": "乐高补全问卷",
   "en": "LEGO Completion Study"
  },
  "question": {
-  "zh": "右边新加的零件（橙色描边）补得合理吗？",
-  "en": "How plausible are the added parts (outlined in orange) on the right?"
+  "completion": {
+   "zh": "对照标准答案，把下面的结果从好到差排名。",
+   "en": "Compared with the reference, rank the results below from best to worst."
+  },
+  "generation": {
+   "zh": "哪个更像一个搭得好的乐高模型？从好到差排名。",
+   "en": "Which looks most like a well-built LEGO model? Rank from best to worst."
+  }
  },
- "labels": {
-  "zh": [
-   "很不合理",
-   "不太合理",
-   "说不准",
-   "比较合理",
-   "很合理"
-  ],
-  "en": [
-   "Very implausible",
-   "Implausible",
-   "Not sure",
-   "Plausible",
-   "Very plausible"
-  ]
- },
- "minutes": 8,
+ "letters": [
+  "A",
+  "B",
+  "C",
+  "D",
+  "E"
+ ],
+ "minutes": 48,
  "questions": [
   {
-   "id": "Q01"
+   "id": "Q01",
+   "kind": "completion",
+   "n": 4
   },
   {
-   "id": "Q02"
+   "id": "Q02",
+   "kind": "completion",
+   "n": 4
   },
   {
-   "id": "Q03"
+   "id": "Q03",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q04"
+   "id": "Q04",
+   "kind": "generation",
+   "n": 5
   },
   {
-   "id": "Q05"
+   "id": "Q05",
+   "kind": "generation",
+   "n": 5
   },
   {
-   "id": "Q06"
+   "id": "Q06",
+   "kind": "completion",
+   "n": 3
   },
   {
-   "id": "Q07"
+   "id": "Q07",
+   "kind": "completion",
+   "n": 4
   },
   {
-   "id": "Q08"
+   "id": "Q08",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q09"
+   "id": "Q09",
+   "kind": "completion",
+   "n": 3
   },
   {
-   "id": "Q10"
+   "id": "Q10",
+   "kind": "generation",
+   "n": 5
   },
   {
-   "id": "Q11"
+   "id": "Q11",
+   "kind": "completion",
+   "n": 3
   },
   {
-   "id": "Q12"
+   "id": "Q12",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q13"
+   "id": "Q13",
+   "kind": "generation",
+   "n": 5
   },
   {
-   "id": "Q14"
+   "id": "Q14",
+   "kind": "completion",
+   "n": 4
   },
   {
-   "id": "Q15"
+   "id": "Q15",
+   "kind": "generation",
+   "n": 5
   },
   {
-   "id": "Q16"
+   "id": "Q16",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q17"
+   "id": "Q17",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q18"
+   "id": "Q18",
+   "kind": "completion",
+   "n": 3
   },
   {
-   "id": "Q19"
+   "id": "Q19",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q20"
+   "id": "Q20",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q21"
+   "id": "Q21",
+   "kind": "completion",
+   "n": 2
   },
   {
-   "id": "Q22"
+   "id": "Q22",
+   "kind": "completion",
+   "n": 5
   },
   {
-   "id": "Q23"
+   "id": "Q23",
+   "kind": "completion",
+   "n": 3
   },
   {
-   "id": "Q24"
+   "id": "Q24",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q25",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q26",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q27",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q28",
+   "kind": "completion",
+   "n": 3
+  },
+  {
+   "id": "Q29",
+   "kind": "completion",
+   "n": 2
+  },
+  {
+   "id": "Q30",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q31",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q32",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q33",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q34",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q35",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q36",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q37",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q38",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q39",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q40",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q41",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q42",
+   "kind": "completion",
+   "n": 3
+  },
+  {
+   "id": "Q43",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q44",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q45",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q46",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q47",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q48",
+   "kind": "completion",
+   "n": 2
+  },
+  {
+   "id": "Q49",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q50",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q51",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q52",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q53",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q54",
+   "kind": "completion",
+   "n": 3
+  },
+  {
+   "id": "Q55",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q56",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q57",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q58",
+   "kind": "completion",
+   "n": 4
+  },
+  {
+   "id": "Q59",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q60",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q61",
+   "kind": "completion",
+   "n": 5
+  },
+  {
+   "id": "Q62",
+   "kind": "completion",
+   "n": 3
+  },
+  {
+   "id": "Q63",
+   "kind": "generation",
+   "n": 5
+  },
+  {
+   "id": "Q64",
+   "kind": "completion",
+   "n": 3
   }
  ]
 }

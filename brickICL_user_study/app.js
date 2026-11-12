@@ -1,6 +1,6 @@
-// The questionnaire: instructions -> one rating per question -> submit.
+// The questionnaire: instructions -> per question, rank the anonymous candidates from best to worst -> submit.
 // Questions come from data/survey.json (written by make_survey.py); answers go to the endpoint in config.json.
-import { Viewer } from './viewer.js';
+import { Viewer, fetchJson } from './viewer.js';
 
 const DATA = 'data/';
 const $ = sel => document.querySelector(sel);
@@ -10,13 +10,13 @@ const TEXT = {
     langButton: 'English',
     help: '说明',
     welcomeTitle: '问卷说明',
-    intro: (n, min) => `这份问卷共 ${n} 题，大约需要 ${min} 分钟。每一题给你看一个缺了一块的乐高模型，以及把这一块补上之后的结果，请你判断补上的零件合不合理。`,
+    intro: (n, min, m, parts) => `这份问卷共 ${n} 题，大约需要 ${min} 分钟，${parts.generation ? `分两部分。第一部分 ${parts.completion} 题：` : ''}每一题给你看一个缺了一块的乐高模型、它的标准答案，以及最多 ${m} 个把这一块补上的结果，请你把这些结果从好到差排名。${parts.generation ? `第二部分 ${parts.generation} 题：每一题给你看 ${m} 个从零搭出来的乐高模型，没有标准答案，请你按“像不像一个搭得好的乐高模型”排名。` : ''}`,
     instructions: [
-      ['看模型。', '左边是缺了一块的模型，右边是补全后的结果：新加的零件用橙色描边，其余零件变淡。拖动旋转，滚轮缩放，右键拖动平移，两个视图会一起转动。'],
-      ['判断新加的零件。', '看它们的种类、位置和朝向像不像这个模型本来该有的样子，有没有悬空、穿进别的零件或者放错地方。'],
-      ['打分。', '每题打 1 到 5 分。没有标准答案，按你自己的判断即可，可以随时回去修改。补全的来源不会显示。'],
+      ['看模型。', '第一行是"输入"（缺了一块的模型）和"标准答案"（蓝色描边的是原本缺的零件）。第二行是几个补全结果，新加的零件用橙色描边，其余零件变淡。拖动旋转，滚轮缩放，右键拖动平移，所有视图会一起转动。'],
+      ['比较。', '对照输入和标准答案，看每个结果新加的零件种类、位置和朝向对不对，有没有悬空、穿进别的零件或者放错地方。和标准答案不完全一样但同样合理的补法，也可以给高分。'],
+      ['排名。', '先点你认为最好的结果，再点第二好的，依次往下；最后一名会自动填上。不能并列。点已选的结果可以取消，也可以清空重排，随时能回去修改。结果用字母表示，来源不显示；同一个字母在不同的题里不代表同一个来源。'],
     ],
-    privacy: '不收集姓名和联系方式。只有在最后点击“提交”时，才会发送你的打分和每题的查看时间；在此之前进度只保存在这个浏览器里。参与是自愿的，可以随时退出。',
+    privacy: '不收集姓名和联系方式。只有在最后点击“提交”时，才会发送你的排名和每题的查看时间；在此之前进度只保存在这个浏览器里。参与是自愿的，可以随时退出。',
     consent: '我已阅读说明，同意参与。',
     start: '开始',
     resume: (k, n) => `继续（已答 ${k} / ${n}）`,
@@ -29,9 +29,20 @@ const TEXT = {
     fitAdded: '看新零件',
     paneInput: '输入',
     paneInputSub: '缺了一块的模型',
-    paneOutput: '补全后',
-    paneOutputSub: k => `新加了 ${k} 个零件`,
-    hint: '拖动旋转 · 滚轮或双指缩放 · 右键拖动平移 · 按 1–5 打分，← → 换题',
+    paneRef: '标准答案',
+    paneRefSub: k => `缺的是这 ${k} 个零件`,
+    candidate: letter => `结果 ${letter}`,
+    candidateSub: k => (k ? `新加了 ${k} 个零件` : '没有加上任何零件'),
+    guide: '对照输入和标准答案，把下面的结果从好到差依次点选。最后一名自动填上，不能并列。',
+    guideGeneration: '这几个模型都是从零搭出来的，彼此无关，也没有标准答案。看它们像不像一个完整、合理、搭得好的乐高模型：零件有没有连在一起、有没有穿进彼此、整体看不看得出是个东西。从好到差依次点选，最后一名自动填上，不能并列。',
+    partLabel: { completion: '第一部分 · 补全', generation: '第二部分 · 从零生成' },
+    generatedSub: k => (k ? `共 ${k} 个零件` : '没有生成出能显示的零件'),
+    rankPick: n => `选为第 ${n} 名`,
+    rankPlace: n => `第 ${n} 名`,
+    rankLine: '你的排名（从好到差）：',
+    rankNone: '还没有选',
+    rankClear: '清空重排',
+    hint: '拖动旋转 · 滚轮或双指缩放 · 右键拖动平移 · ← → 换题',
     loading: '正在加载模型…',
     loadError: '模型加载失败，请刷新页面重试。',
     prev: '上一题',
@@ -39,7 +50,7 @@ const TEXT = {
     toFinish: '完成',
     saved: '进度已保存在本浏览器',
     finishTitle: '准备提交',
-    finishMissing: k => `还有 ${k} 题没有打分`,
+    finishMissing: k => `还有 ${k} 题没有排完`,
     finishNote: '点击“提交”发送你的匿名回答。',
     finishMissingNote: '点下面的圆点可以回到没打分的题。',
     submit: '提交',
@@ -57,13 +68,13 @@ const TEXT = {
     langButton: '中文',
     help: 'Instructions',
     welcomeTitle: 'Study instructions',
-    intro: (n, min) => `This study has ${n} questions and takes about ${min} minutes. Each question shows a LEGO model with a piece missing, and the same model after the missing piece has been filled in. You rate how plausible the added parts are.`,
+    intro: (n, min, m, parts) => `This study has ${n} questions and takes about ${min} minutes${parts.generation ? `, in two parts. Part 1, ${parts.completion} questions:` : '.'} Each question shows a LEGO model with a piece missing, its reference answer, and up to ${m} results that fill the piece in. You rank these results from best to worst.${parts.generation ? ` Part 2, ${parts.generation} questions: each question shows ${m} LEGO models built from nothing, with no reference answer. You rank them by how much each looks like a well-built LEGO model.` : ''}`,
     instructions: [
-      ['Inspect the models.', 'The left view is the incomplete model; the right view is the completed one, with the added parts outlined in orange and the rest faded. Drag to rotate, scroll to zoom, right-drag to pan. The two views move together.'],
-      ['Judge the added parts.', 'Consider whether their type, position and orientation look like what this model should have, and whether anything floats, intersects other parts or sits in the wrong place.'],
-      ['Rate.', 'Give each question a score from 1 to 5. There is no right answer; use your own judgement. You can go back and change a rating at any time. The source of each completion is not shown.'],
+      ['Inspect the models.', 'The first row shows the Input (the model with a piece missing) and the Reference answer (the missing parts outlined in blue). The second row shows the results, with the added parts outlined in orange and the rest faded. Drag to rotate, scroll to zoom, right-drag to pan. All views move together.'],
+      ['Compare.', 'Against the input and the reference, check whether each result adds the right kind of parts in the right place and orientation, and whether anything floats, intersects other parts or sits in the wrong place. A completion that differs from the reference but is just as sensible can still score high.'],
+      ['Rank.', 'Click the result you find best first, then the next best, and so on; last place is filled in automatically. No ties. Click a chosen result to take it back, or clear the ranking and start over; you can change it at any time. Results are lettered and their source is not shown; a letter does not stand for the same source across questions.'],
     ],
-    privacy: 'No name or contact information is requested. Your ratings and the viewing time per question are sent only when you click Submit at the end; until then progress is kept in this browser only. Participation is voluntary and you may leave at any time.',
+    privacy: 'No name or contact information is requested. Your rankings and the viewing time per question are sent only when you click Submit at the end; until then progress is kept in this browser only. Participation is voluntary and you may leave at any time.',
     consent: 'I have read the instructions and agree to take part.',
     start: 'Begin',
     resume: (k, n) => `Continue (${k} of ${n} answered)`,
@@ -76,9 +87,20 @@ const TEXT = {
     fitAdded: 'Added parts',
     paneInput: 'Input',
     paneInputSub: 'the model with a piece missing',
-    paneOutput: 'Completed',
-    paneOutputSub: k => `${k} part${k === 1 ? '' : 's'} added`,
-    hint: 'Drag to rotate · scroll or pinch to zoom · right-drag to pan · keys 1–5 rate, ← → move',
+    paneRef: 'Reference answer',
+    paneRefSub: k => `the ${k} missing part${k === 1 ? '' : 's'}`,
+    candidate: letter => `Result ${letter}`,
+    candidateSub: k => (k ? `${k} part${k === 1 ? '' : 's'} added` : 'no part was added'),
+    guide: 'Compare with the input and the reference, then click the results below from best to worst. Last place is filled in automatically; no ties.',
+    guideGeneration: 'These models were each built from nothing. They are unrelated to each other and there is no reference answer. Judge how much each looks like a complete, sensible, well-built LEGO model: are the parts connected, do they pass through each other, can you tell what it is? Click them from best to worst; last place is filled in automatically, no ties.',
+    partLabel: { completion: 'Part 1 · Completion', generation: 'Part 2 · From nothing' },
+    generatedSub: k => (k ? `${k} part${k === 1 ? '' : 's'}` : 'nothing that can be shown was generated'),
+    rankPick: n => `Pick as #${n}`,
+    rankPlace: n => `#${n}`,
+    rankLine: 'Your ranking, best to worst:',
+    rankNone: 'nothing picked yet',
+    rankClear: 'Clear',
+    hint: 'Drag to rotate · scroll or pinch to zoom · right-drag to pan · ← → move',
     loading: 'Loading the model…',
     loadError: 'The model failed to load. Please reload the page.',
     prev: 'Back',
@@ -86,7 +108,7 @@ const TEXT = {
     toFinish: 'Finish',
     saved: 'Progress saved in this browser',
     finishTitle: 'Ready to submit',
-    finishMissing: k => `${k} question${k === 1 ? ' has' : 's have'} no rating yet`,
+    finishMissing: k => `${k} question${k === 1 ? ' is' : 's are'} not fully ranked yet`,
     finishNote: 'Click Submit to send your anonymous answers.',
     finishMissingNote: 'Use the numbered dots below to go back to them.',
     submit: 'Submit',
@@ -124,20 +146,37 @@ function shuffled(ids, seed) {            // the same order every time this part
 }
 function newSession() {
   const participantId = crypto.randomUUID();
-  return { schemaVersion: 1, version: survey.version, participantId, startedAt: new Date().toISOString(),
-    order: shuffled(survey.questions.map(q => q.id), participantId), current: 0, answers: {}, seconds: {}, viewed: {}, consent: false };
+  return { schemaVersion: 2, version: survey.version, participantId, startedAt: new Date().toISOString(),
+    order: ['completion', 'generation'].flatMap(kind => shuffled(survey.questions.filter(q => q.kind === kind).map(q => q.id), participantId + kind)), current: 0, answers: {}, seconds: {}, viewed: {}, consent: false };
 }
 function loadSession() {
   try {
     const s = JSON.parse(store.get(sessionKey()));
     const ids = new Set(survey.questions.map(q => q.id));
-    if (s?.schemaVersion === 1 && s.version === survey.version && typeof s.participantId === 'string' &&
+    if (s?.schemaVersion === 2 && s.version === survey.version && typeof s.participantId === 'string' &&
         Array.isArray(s.order) && s.order.length === ids.size && s.order.every(id => ids.has(id))) return s;
   } catch { /* fall through */ }
   return newSession();
 }
 const save = () => store.set(sessionKey(), JSON.stringify(session));
-const nAnswered = () => session.order.filter(id => session.answers[id]).length;
+const letters = () => survey.letters;
+const meta = id => survey.questions.find(q => q.id === id);
+const count = id => meta(id).n;                                         // how many candidates the question shows
+const kindOf = id => meta(id).kind;
+const nOfKind = kind => survey.questions.filter(q => q.kind === kind).length;
+const labelsOf = id => letters().slice(0, count(id));
+const isDone = id => (session.answers[id] || []).length === count(id);  // every candidate has a place
+// One click on a candidate. The ranking lists letters from best to worst; the last place is filled in
+// automatically, a click on a chosen candidate takes it back, a click when all are placed replaces the last pick.
+function choose(ranking, label, labels) {
+  const n = labels.length;
+  if (n > 2 && ranking.length === n && ranking[n - 1] === label) return ranking;
+  let picked = ranking.slice(0, n - 1);
+  if (picked.includes(label)) picked = picked.filter(x => x !== label);
+  else { if (picked.length === n - 1) picked.pop(); picked.push(label); }
+  return picked.length === n - 1 ? [...picked, ...labels.filter(x => !picked.includes(x))] : picked;
+}
+const nAnswered = () => session.order.filter(isDone).length;
 const N = () => session.order.length;
 
 function trackTime() {                    // add the time the current question has been on screen
@@ -165,19 +204,11 @@ function renderStatic() {
   document.title = survey.title[lang];
   $('#lang').textContent = t('langButton');
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = el.dataset.t === 'title' ? survey.title[lang] : t(el.dataset.t); });
-  $('#intro').textContent = t('intro')(N(), survey.minutes);
+  $('#intro').textContent = t('intro')(N(), survey.minutes, letters().length, { completion: nOfKind('completion'), generation: nOfKind('generation') });
   $('#instructions').replaceChildren(...instructionItems());
   $('#helpList').replaceChildren(...instructionItems());
   $('#start').textContent = nAnswered() ? t('resume')(nAnswered(), N()) : t('start');
-  $('#rating').style.setProperty('--n', survey.labels[lang].length);
-  $('#rating').replaceChildren(...survey.labels[lang].map((label, i) => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.setAttribute('role', 'radio'); b.dataset.value = i + 1;
-    const num = document.createElement('b'); num.textContent = i + 1;
-    const text = document.createElement('span'); text.textContent = label;
-    b.append(num, text);
-    return b;
-  }));
+  document.querySelectorAll('#cands figure').forEach(fig => { fig.querySelector('b').textContent = t('candidate')(fig.dataset.letter); });
   $('#dots').replaceChildren(...session.order.map((id, i) => {
     const b = document.createElement('button');
     b.type = 'button'; b.textContent = i + 1; b.dataset.index = i;
@@ -187,22 +218,52 @@ function renderStatic() {
   if (view === 'finish') renderFinish();
   if (view === 'done') renderDone();
 }
+function buildCandidates() {            // once: one view and one rank button per candidate letter
+  $('#cands').style.setProperty('--cols', letters().length);
+  $('#cands').replaceChildren(...letters().map(letter => {
+    const fig = document.createElement('figure');
+    fig.dataset.letter = letter;
+    const stage = document.createElement('div'); stage.className = 'stage';
+    const cap = document.createElement('figcaption'); cap.append(document.createElement('b'), document.createElement('span'));
+    const rank = document.createElement('button'); rank.type = 'button'; rank.className = 'rank';
+    fig.append(stage, cap, rank);
+    return fig;
+  }));
+}
 function renderQuestion() {
-  const i = session.current, id = session.order[i], rating = session.answers[id];
-  $('#counter').textContent = t('counter')(i + 1, N());
+  const i = session.current, id = session.order[i], ranking = session.answers[id] || [], labels = labelsOf(id), loaded = question?.id === id;
+  const kind = kindOf(id);
+  $('#counter').textContent = (nOfKind('generation') ? t('partLabel')[kind] + ' · ' : '') + t('counter')(i + 1, N());
   $('#answered').textContent = t('answered')(nAnswered());
   $('#bar').style.width = 100 * nAnswered() / N() + '%';
-  $('#prompt').textContent = survey.question[lang];
-  $('#caption').textContent = question?.id === id && question.caption ? t('captionLabel') + ' ' + question.caption : '';
-  const sub = $('#paneOutputSub');
-  sub.replaceChildren();
-  if (question?.id === id) { const sw = document.createElement('i'); sw.className = 'swatch'; sub.append(sw, t('paneOutputSub')(question.added.length)); }
-  $('#rating').querySelectorAll('button').forEach(b => b.setAttribute('aria-checked', String(+b.dataset.value === rating)));
+  $('#prompt').textContent = survey.question[kind][lang];
+  $('#refs').hidden = kind !== 'completion';                 // generation questions have no input and no reference
+  $('#guide').textContent = t('guide');
+  $('#guideAlone').hidden = kind !== 'generation';
+  $('#guideAlone').textContent = t('guideGeneration');
+  for (const id2 of ['optHighlight', 'fitAdded']) $('#' + id2).hidden = kind !== 'completion';
+  $('#caption').textContent = loaded && question.caption ? t('captionLabel') + ' ' + question.caption : '';
+  const sub = (el, tone, text) => { el.replaceChildren(); if (!loaded) return; const sw = document.createElement('i'); sw.className = 'swatch ' + tone; el.append(sw, text); };
+  sub($('#paneRefSub'), 'ref', loaded ? t('paneRefSub')(question.reference.length) : '');
+  document.querySelectorAll('#cands figure').forEach(fig => {
+    const letter = fig.dataset.letter, shown = labels.includes(letter), place = ranking.indexOf(letter) + 1;
+    fig.hidden = !shown;
+    if (!shown) return;
+    const cand = loaded ? question.candidates.find(c => c.label === letter) : null;
+    if (kind === 'generation') fig.querySelector('figcaption span').textContent = cand ? t('generatedSub')(cand.added.length) : '';
+    else sub(fig.querySelector('figcaption span'), '', cand ? t('candidateSub')(cand.added.length) : '');
+    const button = fig.querySelector('.rank');
+    button.textContent = place ? t('rankPlace')(place) : t('rankPick')(Math.min(ranking.length + 1, labels.length));
+    button.setAttribute('aria-pressed', String(!!place));
+    fig.classList.toggle('placed', !!place);
+  });
+  $('#rankLine').textContent = t('rankLine') + ' ' + (ranking.length ? ranking.join(' > ') : t('rankNone'));
+  $('#rankClear').disabled = !ranking.length;
   $('#prev').disabled = i === 0;
   $('#next').textContent = i === N() - 1 ? t('toFinish') : t('next');
-  $('#next').disabled = !rating;
+  $('#next').disabled = !isDone(id);
   $('#dots').querySelectorAll('button').forEach((b, j) => {
-    b.classList.toggle('done', !!session.answers[session.order[j]]);
+    b.classList.toggle('done', isDone(session.order[j]));
     b.setAttribute('aria-current', String(j === i));
   });
 }
@@ -230,35 +291,42 @@ async function openQuestion(index) {
   if (view !== 'study') show('study');
   renderQuestion();
   wait(t('loading'));
-  viewer ??= new Viewer([$('#stage0'), $('#stage1')], DATA);
+  viewer ??= new Viewer([$('#stageInput'), $('#stageRef'), ...document.querySelectorAll('#cands .stage')], DATA);
   try {
-    const q = await fetch(`${DATA}q/${id}.json?v=${survey.version}`).then(r => { if (!r.ok) throw Error(r.status); return r.json(); });
+    const q = await fetchJson(`${DATA}q/${id}.json?v=${survey.version}`);
     if (session.order[session.current] !== id) return;
     question = q;
     renderQuestion();
-    if (await viewer.show(q)) { wait(''); session.viewed[id] = true; save(); shownAt = document.hidden ? 0 : performance.now(); }
+    const views = [null, q.reference, ...letters().map(l => q.candidates.find(c => c.label === l)?.added || null)];
+    if (await viewer.show({ context: q.context, views, parts: q.parts, separate: kindOf(id) === 'generation' })) { wait(''); session.viewed[id] = true; save(); shownAt = document.hidden ? 0 : performance.now(); }
   } catch (err) {
     console.error(err);
     if (session.order[session.current] === id) wait(t('loadError'));
   }
 }
-function rate(value) {
-  if (view !== 'study' || !(value >= 1 && value <= survey.labels[lang].length)) return;
-  session.answers[session.order[session.current]] = value;
+function pick(letter) {
+  const id = session.order[session.current], labels = labelsOf(id);
+  if (view !== 'study' || !labels.includes(letter)) return;
+  session.answers[id] = choose(session.answers[id] || [], letter, labels);
+  save();
+  renderQuestion();
+}
+function clearRanking() {
+  session.answers[session.order[session.current]] = [];
   save();
   renderQuestion();
 }
 function goNext() {
-  if (!session.answers[session.order[session.current]]) return;
+  if (!isDone(session.order[session.current])) return;
   if (session.current < N() - 1) openQuestion(session.current + 1);
   else { show('finish'); renderFinish(); }
 }
 
 // ---------- submission ----------
 function payload() {
-  return { schemaVersion: 1, version: survey.version, participantId: session.participantId, startedAt: session.startedAt,
+  return { schemaVersion: 2, version: survey.version, participantId: session.participantId, startedAt: session.startedAt,
     submittedAt: new Date().toISOString(), lang, viewport: [innerWidth, innerHeight], order: session.order,
-    answers: session.order.map(id => ({ questionId: id, rating: session.answers[id],
+    answers: session.order.map(id => ({ questionId: id, ranking: [...session.answers[id]],
       activeSeconds: Math.round(session.seconds[id] || 0), loaded3D: !!session.viewed[id] })) };
 }
 async function submit() {
@@ -307,7 +375,8 @@ async function boot() {
   $('#helpDialog .close').onclick = () => $('#helpDialog').close();
   $('#consent').onchange = e => { $('#start').disabled = !e.target.checked; };
   $('#start').onclick = () => { session.consent = true; save(); openQuestion(session.current); };
-  $('#rating').onclick = e => { const b = e.target.closest('button'); if (b) rate(+b.dataset.value); };
+  $('#cands').onclick = e => { const b = e.target.closest('.rank'); if (b) pick(b.closest('figure').dataset.letter); };
+  $('#rankClear').onclick = clearRanking;
   $('#prev').onclick = () => openQuestion(session.current - 1);
   $('#next').onclick = goNext;
   $('#dots').onclick = e => { const b = e.target.closest('button'); if (b) openQuestion(+b.dataset.index); };
@@ -316,17 +385,17 @@ async function boot() {
   $('#fitAll').onclick = () => viewer?.fit();
   $('#fitAdded').onclick = () => viewer?.fit(true);
   $('#submit').onclick = submit;
-  $('#review').onclick = () => openQuestion(Math.max(0, session.order.findIndex(id => !session.answers[id])));
+  $('#review').onclick = () => openQuestion(Math.max(0, session.order.findIndex(id => !isDone(id))));
   $('#download').onclick = download;
   addEventListener('keydown', e => {
     if (view !== 'study' || e.metaKey || e.ctrlKey || e.altKey || $('#helpDialog').open) return;
-    if (/^[1-9]$/.test(e.key)) rate(+e.key);
-    else if (e.key === 'ArrowRight' || e.key === 'Enter') goNext();
+    if (e.key === 'ArrowRight' || e.key === 'Enter') goNext();
     else if (e.key === 'ArrowLeft' && session.current > 0) openQuestion(session.current - 1);
   });
   document.addEventListener('visibilitychange', trackTime);
   addEventListener('pagehide', trackTime);
 
+  buildCandidates();
   renderStatic();
   if (session.receipt) { show('done'); renderDone(); }
   else show('welcome');
