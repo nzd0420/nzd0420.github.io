@@ -14,7 +14,7 @@ const TEXT = {
     instructions: [
       ['看模型。', '第一行是"输入"（缺了一块的模型）和"标准答案"（蓝色描边的是原本缺的零件）。第二行是几个补全结果，新加的零件用橙色描边，其余零件变淡。拖动旋转，滚轮缩放，右键拖动平移，所有视图会一起转动。'],
       ['比较。', '对照输入和标准答案，看每个结果新加的零件种类、位置和朝向对不对，有没有悬空、穿进别的零件或者放错地方。和标准答案不完全一样但同样合理的补法，也可以给高分。'],
-      ['排名。', '先点你认为最好的结果，再点第二好的，依次往下；最后一名会自动填上。不能并列。点已选的结果可以取消，也可以清空重排，随时能回去修改。如果几个结果都很差、分不出好坏，可以点“都很差”，这道题就不用排名。结果用字母表示，来源不显示；同一个字母在不同的题里不代表同一个来源。'],
+      ['排名。', '先点你认为最好的结果，再点第二好的，依次往下；最后一名会自动填上。点已选的结果可以取消，也可以清空重排，随时能回去修改。如果只分得出前面一个或几个，排好它们以后点“其余并列”，剩下的就算一样、不分先后。如果几个结果都很差、分不出好坏，可以点“都很差”，这道题就不用排名。结果用字母表示，来源不显示；同一个字母在不同的题里不代表同一个来源。'],
     ],
     privacy: '不收集姓名和联系方式。只有在最后点击“提交”时，才会发送你的排名和每题的查看时间；在此之前进度只保存在这个浏览器里。参与是自愿的，可以随时退出。',
     consent: '我已阅读说明，同意参与。',
@@ -33,8 +33,8 @@ const TEXT = {
     paneRefSub: k => `缺的是这 ${k} 个零件`,
     candidate: letter => `结果 ${letter}`,
     candidateSub: k => (k ? `新加了 ${k} 个零件` : '没有加上任何零件'),
-    guide: '对照输入和标准答案，把下面的结果从好到差依次点选。最后一名自动填上，不能并列。',
-    guideGeneration: '这几个模型都是从零搭出来的，彼此无关，也没有标准答案。看它们像不像一个完整、合理、搭得好的乐高模型：零件有没有连在一起、有没有穿进彼此、整体看不看得出是个东西。从好到差依次点选，最后一名自动填上，不能并列。',
+    guide: '对照输入和标准答案，把下面的结果从好到差依次点选，最后一名自动填上。只分得出前几个时点“其余并列”；都很差时点“都很差”。',
+    guideGeneration: '这几个模型都是从零搭出来的，彼此无关，也没有标准答案。看它们像不像一个完整、合理、搭得好的乐高模型：零件有没有连在一起、有没有穿进彼此、整体看不看得出是个东西。从好到差依次点选，最后一名自动填上。只分得出前几个时点“其余并列”；都很差时点“都很差”。',
     partLabel: { completion: '第一部分 · 补全', generation: '第二部分 · 从零生成' },
     generatedSub: k => (k ? `共 ${k} 个零件` : '没有生成出能显示的零件'),
     rankPick: n => `选为第 ${n} 名`,
@@ -42,6 +42,8 @@ const TEXT = {
     rankLine: '你的排名（从好到差）：',
     rankNone: '还没有选',
     rankClear: '清空重排',
+    tieRest: '其余并列',
+    rankTied: '并列',
     allBad: '都很差',
     allBadLine: '你的回答：都很差，不排名',
     hint: '拖动旋转 · 滚轮或双指缩放 · 右键拖动平移 · ← → 换题',
@@ -74,7 +76,7 @@ const TEXT = {
     instructions: [
       ['Inspect the models.', 'The first row shows the Input (the model with a piece missing) and the Reference answer (the missing parts outlined in blue). The second row shows the results, with the added parts outlined in orange and the rest faded. Drag to rotate, scroll to zoom, right-drag to pan. All views move together.'],
       ['Compare.', 'Against the input and the reference, check whether each result adds the right kind of parts in the right place and orientation, and whether anything floats, intersects other parts or sits in the wrong place. A completion that differs from the reference but is just as sensible can still score high.'],
-      ['Rank.', 'Click the result you find best first, then the next best, and so on; last place is filled in automatically. No ties. Click a chosen result to take it back, or clear the ranking and start over; you can change it at any time. If the results are all bad and you cannot tell them apart, click “All bad” and the question needs no ranking. Results are lettered and their source is not shown; a letter does not stand for the same source across questions.'],
+      ['Rank.', 'Click the result you find best first, then the next best, and so on; last place is filled in automatically. Click a chosen result to take it back, or clear the ranking and start over; you can change it at any time. If you can only tell the best one or few apart, rank those and click “Tie the rest”: the others count as equal. If the results are all bad and you cannot tell them apart, click “All bad” and the question needs no ranking. Results are lettered and their source is not shown; a letter does not stand for the same source across questions.'],
     ],
     privacy: 'No name or contact information is requested. Your rankings and the viewing time per question are sent only when you click Submit at the end; until then progress is kept in this browser only. Participation is voluntary and you may leave at any time.',
     consent: 'I have read the instructions and agree to take part.',
@@ -93,8 +95,8 @@ const TEXT = {
     paneRefSub: k => `the ${k} missing part${k === 1 ? '' : 's'}`,
     candidate: letter => `Result ${letter}`,
     candidateSub: k => (k ? `${k} part${k === 1 ? '' : 's'} added` : 'no part was added'),
-    guide: 'Compare with the input and the reference, then click the results below from best to worst. Last place is filled in automatically; no ties.',
-    guideGeneration: 'These models were each built from nothing. They are unrelated to each other and there is no reference answer. Judge how much each looks like a complete, sensible, well-built LEGO model: are the parts connected, do they pass through each other, can you tell what it is? Click them from best to worst; last place is filled in automatically, no ties.',
+    guide: 'Compare with the input and the reference, then click the results below from best to worst; last place is filled in automatically. If only the first few can be told apart, click “Tie the rest”; if all are bad, click “All bad”.',
+    guideGeneration: 'These models were each built from nothing. They are unrelated to each other and there is no reference answer. Judge how much each looks like a complete, sensible, well-built LEGO model: are the parts connected, do they pass through each other, can you tell what it is? Click them from best to worst; last place is filled in automatically. If only the first few can be told apart, click “Tie the rest”; if all are bad, click “All bad”.',
     partLabel: { completion: 'Part 1 · Completion', generation: 'Part 2 · From nothing' },
     generatedSub: k => (k ? `${k} part${k === 1 ? '' : 's'}` : 'nothing that can be shown was generated'),
     rankPick: n => `Pick as #${n}`,
@@ -102,6 +104,8 @@ const TEXT = {
     rankLine: 'Your ranking, best to worst:',
     rankNone: 'nothing picked yet',
     rankClear: 'Clear',
+    tieRest: 'Tie the rest',
+    rankTied: 'Tied',
     allBad: 'All bad',
     allBadLine: 'Your answer: all bad, no ranking',
     hint: 'Drag to rotate · scroll or pinch to zoom · right-drag to pan · ← → move',
@@ -151,7 +155,7 @@ function shuffled(ids, seed) {            // the same order every time this part
 function newSession() {
   const participantId = crypto.randomUUID();
   return { schemaVersion: 2, version: survey.version, participantId, startedAt: new Date().toISOString(),
-    order: ['completion', 'generation'].flatMap(kind => shuffled(survey.questions.filter(q => q.kind === kind).map(q => q.id), participantId + kind)), current: 0, answers: {}, allBad: {}, seconds: {}, viewed: {}, consent: false };
+    order: ['completion', 'generation'].flatMap(kind => shuffled(survey.questions.filter(q => q.kind === kind).map(q => q.id), participantId + kind)), current: 0, answers: {}, tied: {}, allBad: {}, seconds: {}, viewed: {}, consent: false };
 }
 function loadSession() {
   try {
@@ -170,7 +174,11 @@ const kindOf = id => meta(id).kind;
 const nOfKind = kind => survey.questions.filter(q => q.kind === kind).length;
 const labelsOf = id => letters().slice(0, count(id));
 const isAllBad = id => session.allBad?.[id] === true;                   // answered "all bad" instead of ranking
-const isDone = id => isAllBad(id) || (session.answers[id] || []).length === count(id);  // every candidate has a place
+// "Tie the rest": the candidates picked so far are ranked, the others share the places after them. It needs at
+// least one pick and at least two candidates left over (with one left over the ranking is simply complete).
+const canTie = id => { const k = (session.answers[id] || []).length; return !isAllBad(id) && k >= 1 && k <= count(id) - 2; };
+const isTied = id => session.tied?.[id] === true && canTie(id);
+const isDone = id => isAllBad(id) || isTied(id) || (session.answers[id] || []).length === count(id);  // every candidate has a place
 // One click on a candidate. The ranking lists letters from best to worst; the last place is filled in
 // automatically, a click on a chosen candidate takes it back, a click when all are placed replaces the last pick.
 function choose(ranking, label, labels) {
@@ -236,7 +244,7 @@ function buildCandidates() {            // once: one view and one rank button pe
   }));
 }
 function renderQuestion() {
-  const i = session.current, id = session.order[i], bad = isAllBad(id), ranking = bad ? [] : session.answers[id] || [], labels = labelsOf(id), loaded = question?.id === id;
+  const i = session.current, id = session.order[i], bad = isAllBad(id), tied = isTied(id), ranking = bad ? [] : session.answers[id] || [], labels = labelsOf(id), loaded = question?.id === id;
   const kind = kindOf(id);
   $('#counter').textContent = (nOfKind('generation') ? t('partLabel')[kind] + ' · ' : '') + t('counter')(i + 1, N());
   $('#answered').textContent = t('answered')(nAnswered());
@@ -258,11 +266,16 @@ function renderQuestion() {
     if (kind === 'generation') fig.querySelector('figcaption span').textContent = cand ? t('generatedSub')(cand.added.length) : '';
     else sub(fig.querySelector('figcaption span'), '', cand ? t('candidateSub')(cand.added.length) : '');
     const button = fig.querySelector('.rank');
-    button.textContent = place ? t('rankPlace')(place) : t('rankPick')(Math.min(ranking.length + 1, labels.length));
+    button.textContent = place ? t('rankPlace')(place) : tied ? t('rankTied') : t('rankPick')(Math.min(ranking.length + 1, labels.length));
     button.setAttribute('aria-pressed', String(!!place));
+    button.classList.toggle('tied', !place && tied);
     fig.classList.toggle('placed', !!place);
   });
-  $('#rankLine').textContent = bad ? t('allBadLine') : t('rankLine') + ' ' + (ranking.length ? ranking.join(' > ') : t('rankNone'));
+  const rest = labels.filter(l => !ranking.includes(l));
+  $('#rankLine').textContent = bad ? t('allBadLine') : t('rankLine') + ' ' + (ranking.length ? ranking.join(' > ') + (tied ? ' > ' + rest.join(' = ') : '') : t('rankNone'));
+  $('#tieRest').setAttribute('aria-pressed', String(tied));
+  $('#tieRest').disabled = !canTie(id);
+  $('#tieRest').hidden = labels.length < 3;                  // with two candidates there is nothing left to tie
   $('#rankClear').disabled = !ranking.length;
   $('#allBad').setAttribute('aria-pressed', String(bad));
   $('#cands').classList.toggle('all-bad', bad);
@@ -316,11 +329,22 @@ function pick(letter) {
   if (view !== 'study' || !labels.includes(letter)) return;
   if (isAllBad(id)) { delete session.allBad[id]; session.answers[id] = []; }   // ranking takes the "all bad" answer back
   session.answers[id] = choose(session.answers[id] || [], letter, labels);
+  if (session.tied?.[id] && !canTie(id)) delete session.tied[id];              // nothing ranked, or nothing left to tie
   save();
   renderQuestion();
 }
 function clearRanking() {
-  session.answers[session.order[session.current]] = [];
+  const id = session.order[session.current];
+  session.answers[id] = [];
+  if (session.tied) delete session.tied[id];
+  save();
+  renderQuestion();
+}
+function toggleTieRest() {                // the picks so far stay ranked, the other candidates are tied after them
+  const id = session.order[session.current];
+  session.tied ??= {};
+  if (isTied(id)) delete session.tied[id];
+  else if (canTie(id)) session.tied[id] = true;
   save();
   renderQuestion();
 }
@@ -328,7 +352,7 @@ function toggleAllBad() {                 // "all bad" answers the question in p
   const id = session.order[session.current];
   session.allBad ??= {};
   if (isAllBad(id)) delete session.allBad[id];
-  else { session.allBad[id] = true; session.answers[id] = []; }
+  else { session.allBad[id] = true; session.answers[id] = []; if (session.tied) delete session.tied[id]; }
   save();
   renderQuestion();
 }
@@ -339,6 +363,7 @@ function goNext() {
 }
 
 // ---------- submission ----------
+// A ranking that names fewer letters than the question has candidates means the rest are tied after them.
 function payload() {
   return { schemaVersion: 2, version: survey.version, participantId: session.participantId, startedAt: session.startedAt,
     submittedAt: new Date().toISOString(), lang, viewport: [innerWidth, innerHeight], order: session.order,
@@ -393,6 +418,7 @@ async function boot() {
   $('#start').onclick = () => { session.consent = true; save(); openQuestion(session.current); };
   $('#cands').onclick = e => { const b = e.target.closest('.rank'); if (b) pick(b.closest('figure').dataset.letter); };
   $('#rankClear').onclick = clearRanking;
+  $('#tieRest').onclick = toggleTieRest;
   $('#allBad').onclick = toggleAllBad;
   $('#prev').onclick = () => openQuestion(session.current - 1);
   $('#next').onclick = goNext;

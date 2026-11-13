@@ -78,7 +78,8 @@ figure.placed .stage { box-shadow: 0 0 0 2px var(--accent); }
 #cands { grid-template-columns: repeat(var(--cols, 4), 1fr); }      /* all candidates in one row */
 figure[hidden], .grid[hidden], .pill[hidden] { display: none; }
 .ranking { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; min-height: 34px; font-weight: 600; }
-#allBad { font-size: 14px; padding: 7px 18px; font-weight: 600; white-space: nowrap; }
+#allBad, #tieRest { font-size: 14px; padding: 7px 18px; font-weight: 600; white-space: nowrap; }
+.rank.tied { border-style: dashed; color: var(--text2); }
 #cands.all-bad figure { opacity: .55; }
 .nav { display: flex; gap: 12px; align-items: center; margin-top: 16px; }
 .dots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 26px; }
